@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose'
+import bcrypt from 'bcryptjs'
 
 export interface IUser {
     _id: string;
@@ -9,6 +10,8 @@ export interface IUser {
     interests: string[];
     is_verified: boolean;
     location: string;
+    cover_image: { url: string, publicId: string };
+    images: { url: string, publicId: string }[]
 }
 
 const userSchema = new Schema<IUser>({
@@ -21,8 +24,28 @@ const userSchema = new Schema<IUser>({
         type: Boolean,
         default: false
     },
-    interests: [String]
+    interests: [String],
+    cover_image: {
+        url: String,
+        publicId: String
+    },
+    images: [
+        {
+            url: String,
+            publicId: String
+        }
+    ]
 })
+
+userSchema.pre("save", async function (next) {
+    // Only run this function if password was actually modified
+    if (!this.isModified("password")) return next();
+
+    // Hash the password with cost of 12
+    this.password = await bcrypt.hash(this.password, 12);
+
+    next();
+});
 
 
 export default model("User", userSchema)

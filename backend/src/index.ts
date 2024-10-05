@@ -1,38 +1,46 @@
-// import express from 'express'
-
-import { Request, Response } from "express";
-
-
-
-// const app = express();
-
-
-
-// app.listen(3000, () => {
-//     console.log("Server is running on port 3000")
-// })
-
-// Server setup (Express.js + Apollo Server)
+import { Application, Request, Response } from "express";
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
+import 'express-async-errors';
 const { createServer } = require('http');
 const { execute, subscribe } = require('graphql');
 const { SubscriptionServer } = require('subscriptions-transport-ws');
 const { makeExecutableSchema } = require('@graphql-tools/schema');
 const jwt = require('jsonwebtoken');
+import dotenv from 'dotenv';
+import cors from "cors";
+import { config } from "./utils/config";
+import { errorHandler } from "./middleware/error.m";
+import DB from "./utils/DB";
+import cookieParser from 'cookie-parser';
 
-const app = express();
+/**routes */
+import authRouter from './routes/auth.r'
+import userRouter from './routes/user.r'
+
+dotenv.config();
+
+const app: Application = express();
 const httpServer = createServer(app);
 
-// REST API routes for authentication
-app.post('/api/login', (req: Request, res: Response) => {
-    // Implement login logic
-    // On successful login, generate and return a JWT
-});
+const corsOptions = {
+    origin: '*', // Replace with your frontend URL
+    credentials: true, // This is important for cookies
+};
 
-app.post('/api/register', (req: Request, res: Response) => {
-    // Implement user registration logic
-});
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(cookieParser())
+
+
+// app.options("*", cors());
+
+// REST API routes for authentication
+app.use('/api/auth', authRouter)
+app.use('/api/users', userRouter)
+
+
+
 
 // GraphQL schema and resolvers
 const typeDefs = `
@@ -96,6 +104,7 @@ const server = new ApolloServer({
         }
     },
 });
+app.use(errorHandler)
 
 server.start().then(() => {
     server.applyMiddleware({ app });
@@ -105,7 +114,9 @@ server.start().then(() => {
         { server: httpServer, path: server.graphqlPath }
     );
 
-    httpServer.listen(4000, () => {
-        console.log(`Server running on http://localhost:4000${server.graphqlPath}`);
+    const db = new DB(console);
+    db.connect(config.mongodbUri);
+    httpServer.listen(config.port, () => {
+        console.log(`Server running on http://localhost:${config.port}${server.graphqlPath}`);
     });
 });
