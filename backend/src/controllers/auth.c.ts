@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { login, register } from "../services/auth.s";
+import { login, register, refreshToken } from "../services/auth.s";
 
 export const RegisterController = async (req: Request, res: Response) => {
     const { user, accessToken, refreshToken } = await register(req.body);
@@ -28,4 +28,19 @@ export const LoginController = async (req: Request, res: Response) => {
     console.log('Cookie set:', res.getHeader('Set-Cookie'));
 
     res.status(200).json({ data: { user, token: accessToken } })
+}
+
+
+export const RefreshTokenController = async (req: Request, res: Response) => {
+    const refresh_token = req.cookies?.refresh_token ? req.cookies.refresh_token : ''
+    const tokens = await refreshToken(refresh_token)
+
+    res.cookie('refresh_token', tokens.refresh_token, {
+        httpOnly: true,
+        sameSite: 'none',
+        // secure: req.secure || req.headers["x-forwarded-proto"] === "https",
+        // secure: true
+    })
+
+    res.status(200).json({ data: { token: tokens.access_token }, statusCode: 200 })
 }

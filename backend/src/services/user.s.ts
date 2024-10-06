@@ -1,11 +1,7 @@
 import User, { IUser } from "../models/User";
 import { uploadImage, deleteImage } from "../utils/cloudinary";
 import { CustomError } from "../utils/customError";
-
-interface IFileBuffer {
-    mimetype: string,
-    buffer: Buffer,
-}
+import { IFileBuffer } from "../utils/interfaces";
 
 export const uploadProfileImage = async (userId: string, file: IFileBuffer) => {
     const user = await User.findById(userId).select('-password')
@@ -14,7 +10,7 @@ export const uploadProfileImage = async (userId: string, file: IFileBuffer) => {
     const ProfileImageResult = await uploadImage(file.buffer)
     const profileImage = { url: (ProfileImageResult as any).secure_url, publicId: (ProfileImageResult as any).public_id }
 
-    user.cover_image = profileImage;
+    user.profile_image = profileImage;
     user.save();
 
     return user
@@ -31,6 +27,8 @@ export const uploadImages = async (userId: string, files: IFileBuffer[]) => {
 
     user.images.push(...images);
     await user.save();
+
+    return user;
 }
 
 export const deleteImageService = async (publicId: string) => {

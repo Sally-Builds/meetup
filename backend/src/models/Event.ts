@@ -1,13 +1,17 @@
-import { ObjectId, Schema, Types, model } from 'mongoose'
+import { Schema, Types, model } from 'mongoose'
+import slugify from "slugify";
+import { generateRandom } from '../utils/lib';
 
 export interface IEvent {
     name: string;
     activities: string[]
     description: string;
-    date: string;
+    date: Date;
     location: string;
     expected_attendees: number;
-    user: Types.ObjectId
+    cover_image: { url: string, publicId: string };
+    user: Types.ObjectId,
+    slug: string
 }
 
 
@@ -15,13 +19,18 @@ const eventSchema = new Schema<IEvent>({
     name: String,
     activities: [String],
     description: String,
-    date: String,
+    date: Date,
     location: String,
     expected_attendees: Number,
+    cover_image: {
+        url: String,
+        publicId: String
+    },
     user: {
         type: Schema.Types.ObjectId,
         ref: "User"
-    }
+    },
+    slug: String
 })
 
 const eventAttendees = new Schema({
@@ -33,6 +42,13 @@ const eventAttendees = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User"
     }
+})
+
+eventSchema.pre('save', function (next) {
+    if (this.isNew) {
+        this.slug = slugify(`${this.name} ${generateRandom()}`.toLowerCase(), '-')
+    }
+    next()
 })
 
 

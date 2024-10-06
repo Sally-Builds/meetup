@@ -17,6 +17,7 @@ import cookieParser from 'cookie-parser';
 /**routes */
 import authRouter from './routes/auth.r'
 import userRouter from './routes/user.r'
+import eventRouter from './routes/event.r'
 
 dotenv.config();
 
@@ -38,6 +39,7 @@ app.use(cookieParser())
 // REST API routes for authentication
 app.use('/api/auth', authRouter)
 app.use('/api/users', userRouter)
+app.use('/api/events', eventRouter)
 
 
 

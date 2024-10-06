@@ -1,7 +1,8 @@
 import User, { IUser } from "../models/User";
 import { CustomError } from "../utils/customError";
 import bcrypt from 'bcryptjs';
-import { createToken } from "../utils/token_cryptography";
+import jwt from 'jsonwebtoken';
+import { createToken, verifyToken } from "../utils/token_cryptography";
 
 
 export const register = async (payload: IUser) => {
@@ -48,5 +49,26 @@ export const login = async (email: string, password: string) => {
         }),
         accessToken,
         refreshToken
+    }
+}
+
+export const refreshToken = async (refresh_token: string) => {
+    try {
+        const decoded = await verifyToken(refresh_token)
+
+        if (decoded instanceof jwt.JsonWebTokenError) {
+            throw new CustomError({ message: 'refresh token invalid', code: 401, ctx: { data: 'invalid bearer token' } });
+        }
+        const user = await User.findOne({ _id: decoded.id })
+        if (!user) {
+            throw new CustomError({ message: 'refresh token invalid', code: 401, ctx: { data: 'invalid bearer token' } })
+        }
+
+        return {
+            access_token: createToken(user.id, '12m'),
+            refresh_token: createToken(user.id, '30d')
+        }
+    } catch (e) {
+        throw new CustomError({ message: 'refresh token invalid', code: 401, ctx: { data: 'invalid bearer token' } })
     }
 }

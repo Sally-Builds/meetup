@@ -10,7 +10,7 @@ export interface IUser {
     interests: string[];
     is_verified: boolean;
     location: string;
-    cover_image: { url: string, publicId: string };
+    profile_image: { url: string, publicId: string };
     images: { url: string, publicId: string }[]
 }
 
@@ -25,7 +25,7 @@ const userSchema = new Schema<IUser>({
         default: false
     },
     interests: [String],
-    cover_image: {
+    profile_image: {
         url: String,
         publicId: String
     },
