@@ -1,0 +1,46 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  /* justify-content: space-between; */
+  height: 100%;
+}
+
+.title {
+  font-size: 34px;
+  font-weight: 800;
+  color: #6c6c6c;
+  background: url("/images/bg_meetup_half.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left;
+  min-height: 100px;
+}
+
+.bg-img {
+  background: url("/images/landing.png");
+  min-height: 200px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.heading {
+  font-size: 30px;
+  font-weight: 700;
+  color: rgb(114, 73, 11);
+  background: url("/images/bg_meet.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  text-align: center;
+}
+
+.btn {
+  background: #50c2c9;
+  padding: 16px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  margin: 10px;
+}
