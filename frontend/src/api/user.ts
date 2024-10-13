@@ -39,6 +39,7 @@ export interface ISignupDTO {
 
 export const signup = async (data: ISignupDTO): Promise<{ token: string, user: IUser }> => {
     const res = await API.post('/auth/register', data, { headers: { "Content-Type": "application/json" }, withCredentials: true })
+    localStorage.setItem('token', res.data.data.token)
 
     console.log(res.data.data)
 

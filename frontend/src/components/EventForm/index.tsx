@@ -17,6 +17,7 @@ import { useAppStore } from "../../store/appStore";
 import { useMutation } from "@tanstack/react-query";
 import { createEvent } from "../../api/event";
 import { useToast } from "@chakra-ui/react";
+import moment from "moment";
 
 interface Option {
   readonly value: string;
@@ -144,6 +145,7 @@ const EventForm = ({ title }: { title: string }) => {
                   onFocus={handleFocus}
                   //   onBlur={handleBlur}
                   {...field}
+                  min={moment().format("YYYY-MM-DD HH:mm:ss")}
                 />
               )}
             />

@@ -70,7 +70,14 @@ const SignupPage = () => {
   return (
     <>
       <div className={styles["container"]}>
-        <div className={styles["title"]}>{authPageConstants.title}</div>
+        <div className={styles["title"]}>
+          <div>
+            <button onClick={() => navigate(-1)}>
+              <i className="fa-solid fa-chevron-left"></i>
+            </button>
+          </div>
+          {authPageConstants.btnGroup[0].title}
+        </div>
         <div className="heading">
           Let's help you meet people with similar interests
         </div>
@@ -126,6 +133,7 @@ const SignupPage = () => {
                       onBlur={(e) =>
                         !e.target.value && (e.target.type = "text")
                       }
+                      max="2004-12-31"
                     />
                   )}
                 />

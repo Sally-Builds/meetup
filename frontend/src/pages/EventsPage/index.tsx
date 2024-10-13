@@ -6,12 +6,17 @@ import { useNavigate } from "react-router-dom";
 import { IEvent, getEvents } from "../../api/event";
 import { useQuery } from "@tanstack/react-query";
 import moment from "moment";
+import { useEventStore } from "../../store/eventStore";
+import { useUserStore } from "../../store/userStore";
 
 const filterOptions = ["All", "Past", "Upcoming", "My Events", "Attending"];
 const EventsPage = () => {
   const navigate = useNavigate();
   const [filterValue, setFilterValue] = useState(filterOptions[0]);
   const [filteredData, setFilteredData] = useState<IEvent[]>([]);
+  const { setEvents } = useEventStore();
+
+  const { loggedInUser } = useUserStore();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["events"],
@@ -20,6 +25,9 @@ const EventsPage = () => {
 
   useEffect(() => {
     filterFn(filterValue);
+    if (data) {
+      setEvents(data.events);
+    }
   }, [filterValue, data]);
 
   isLoading && <>Loading</>;
@@ -42,7 +50,9 @@ const EventsPage = () => {
         );
       }
       if (value == filterOptions[3]) {
-        setFilteredData(data.events.filter((event) => event.user == ""));
+        setFilteredData(
+          data.events.filter((event) => event.user == loggedInUser?._id)
+        );
       } else {
         return data.events;
       }
@@ -96,7 +106,13 @@ const EventsPage = () => {
             className={styles["grid"]}
           >
             {filteredData.map((el) => (
-              <GridItem key={el.slug} w="100%" h="200" bg="#6c6c6c">
+              <GridItem
+                key={el.slug}
+                w="100%"
+                h="200"
+                bg="#6c6c6c"
+                onClick={() => navigate(el.slug)}
+              >
                 <img
                   src={el.cover_image.url}
                   alt=""

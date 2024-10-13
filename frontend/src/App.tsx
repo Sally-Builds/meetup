@@ -47,7 +47,7 @@ function App() {
           path: "/getting-started",
           element: (
             // <Protected>
-              <GettingStartedPage />
+            <GettingStartedPage />
             // </Protected>
           ),
         },
@@ -74,7 +74,7 @@ function App() {
           element: <CreateEventPage />,
         },
         {
-          path: "events/:id",
+          path: "events/:slug",
           element: <EventOverviewPage />,
         },
       ],

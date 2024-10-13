@@ -6,6 +6,6 @@ export const CreateEventValidation = Joi.object({
     description: Joi.string().required(),
     date: Joi.date().required(),
     location: Joi.string().required(),
-    expected_attendees: Joi.number().integer().min(10).required(),
+    expected_attendees: Joi.number().integer().min(3).required(),
 });
 ;

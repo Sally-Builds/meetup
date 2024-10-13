@@ -7,7 +7,14 @@ const TermsPage = () => {
   return (
     <>
       <div className={styles["container"]}>
-        <div className={styles["title"]}>{termsPageConstants.title}</div>
+        <div className={styles["title"]}>
+          <div>
+            <button onClick={() => navigate(-1)}>
+              <i className="fa-solid fa-chevron-left"></i>
+            </button>
+          </div>
+          {termsPageConstants.title}
+        </div>
         <div className={styles["bg-img"]}></div>
         <div className={styles["heading"]}>{termsPageConstants.heading}</div>
         <div className={styles["link"]}>

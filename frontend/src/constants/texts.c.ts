@@ -12,8 +12,8 @@ export const termsPageConstants = {
 }
 
 export const authPageConstants = {
-    title: "Let's Go!!!",
-    btnGroup: [{ btnText: "Signup", btnLink: "/signup" }, { btnText: "Login", btnLink: "/login" }]
+    title: "",
+    btnGroup: [{ btnText: "Signup", btnLink: "/signup", title: "Signup" }, { btnText: "Login", btnLink: "/login", title: "Login" }]
 }
 
 export const gettingStartedConstants = {

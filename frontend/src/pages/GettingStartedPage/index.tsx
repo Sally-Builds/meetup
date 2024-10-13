@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import styles from "./index.module.css";
 import { Image, Input, Stack } from "@chakra-ui/react";
 import { Checkbox, Text } from "@chakra-ui/react";
-import { gettingStartedConstants } from "../../constants/texts.c";
 import { Grid, GridItem } from "@chakra-ui/react";
 import { useAppStore } from "../../store/appStore";
 import { useUserStore } from "../../store/userStore";
@@ -43,6 +42,7 @@ const ProfileImageUpload = ({ nextStep }: { nextStep: () => void }) => {
     setIsLoading(true);
     if (!file) {
       setErrMsg("Please upload your profile image to continue");
+      setIsLoading(false);
       return;
     }
     const form = new FormData();
@@ -79,6 +79,7 @@ const Interests = ({ nextStep }: { nextStep: () => void }) => {
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [errMsg, setErrMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const { interests } = useAppStore();
 
@@ -86,6 +87,7 @@ const Interests = ({ nextStep }: { nextStep: () => void }) => {
     mutationFn: updateUser,
     onSuccess: () => {
       nextStep();
+      navigate("/dashboard");
     },
     onError: (error) => {
       console.log(error, "from use Mutation error");
@@ -106,6 +108,7 @@ const Interests = ({ nextStep }: { nextStep: () => void }) => {
   const submit = async () => {
     setIsLoading(true);
     if (checkedItems.length == 0) {
+      setIsLoading(false);
       return;
     }
     console.log(checkedItems);
@@ -217,14 +220,16 @@ const ImagesUpload = ({ nextStep }: { nextStep: () => void }) => {
 
 const GettingStartedPage = () => {
   const { gettingStartedStep, setGettingStartedStep } = useAppStore();
-  const { loggedInUser } = useUserStore();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  // const [isLoading, setIsLoading] = useState(true);
 
-  console.log(loggedInUser, "not ");
-
-  useEffect(() => {
-    if (!loggedInUser) navigate("/login");
-  }, [loggedInUser]);
+  // useEffect(() => {
+  //   if (localStorage.getItem("token")) {
+  //     navigate("/dashboard");
+  //   } else {
+  //     navigate("/login");
+  //   }
+  // }, []);
 
   const nextStep = () => {
     setGettingStartedStep(gettingStartedStep + 1);

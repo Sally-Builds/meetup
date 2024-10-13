@@ -1,0 +1,31 @@
+.container {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: #6c6c6c;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  /* padding: 12px; */
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #6c6c6c;
+  text-align: center;
+}
+
+.sub-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.activities {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
