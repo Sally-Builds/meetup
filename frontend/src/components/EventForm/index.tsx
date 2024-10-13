@@ -145,7 +145,7 @@ const EventForm = ({ title }: { title: string }) => {
                   onFocus={handleFocus}
                   //   onBlur={handleBlur}
                   {...field}
-                  min={moment().format("YYYY-MM-DD HH:mm:ss")}
+                  // min={moment().format("YYYY-MM-DD HH:mm:ss")}
                 />
               )}
             />
