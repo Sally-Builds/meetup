@@ -3,7 +3,7 @@ import Hero from "../../components/Hero";
 import styles from "./index.module.css";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "../../api/user";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -14,23 +14,29 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
-    console.log("entered");
-  }, []);
+    if (data && !isLoading && !error) {
+      // Ensure profile_image exists and is not null
+      if (!data.profile_image || !data.profile_image.url) {
+        navigate("/getting-started");
+      }
+    }
+  }, [data, isLoading, error, navigate]);
 
   console.log(data);
+
   return (
     <>
       {isLoading && <p> Please wait... </p>}
       {data && (
         <>
-          <Hero img={data.profile_image.url} />
+          <Hero img={data.profile_image?.url} />
           <div className={styles["container"]}>
             <div className={styles["heading"]}>
               <div className="title">Welcome back, {data.full_name} </div>
               <span className="description">
-                You can choose between Duo meetup to connect with individual of
-                similar interest, or hangout with meetup multi to join a group
-                event or even host a group event
+                You can choose between Duo meetup to connect with individuals of
+                similar interest, or hangout with Meetup Multi to join or host a
+                group event.
               </span>
             </div>
             <button className={styles["btn"]}>Duo Meetup</button>

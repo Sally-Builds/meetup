@@ -48,6 +48,7 @@ const Protected: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   // Handle redirection after setting the step
   if (data && !data.profile_image) {
+    console.log("entered here");
     navigate("/getting-started");
   }
   if (data && data.interests.length === 0) {
