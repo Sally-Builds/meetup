@@ -155,7 +155,7 @@ const SignupPage = () => {
                   control={control}
                   render={({ field }) => (
                     <InputGroup>
-                      <InputLeftAddon>+234</InputLeftAddon>
+                      <InputLeftAddon>+61</InputLeftAddon>
                       <Input {...field} type="tel" placeholder="phone number" />
                     </InputGroup>
                   )}
@@ -268,7 +268,6 @@ const SignupPage = () => {
             Already have an account? <a href="/login">Login</a>{" "}
           </div>
         </form>
-
       </div>
     </>
   );

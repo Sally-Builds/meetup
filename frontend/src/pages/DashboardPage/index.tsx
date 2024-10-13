@@ -15,7 +15,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (data && !isLoading && !error) {
-      // Ensure profile_image exists and is not null
+      // Ensure profile_image exists and is not null pushed
       if (!data.profile_image || !data.profile_image.url) {
         navigate("/getting-started");
       }
