@@ -1,0 +1,32 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  /* background-color: aquamarine; */
+  min-height: 300px;
+  justify-content: center;
+  gap: 10px;
+  padding: 4px;
+}
+
+.heading div {
+  font-size: 18px;
+  font-weight: 700;
+  color: #6c6c6c;
+  text-align: center;
+}
+
+.heading span {
+  font-size: 14px;
+  text-align: center;
+  text-wrap: wrap;
+  padding: 0 8px;
+}
+
+.btn {
+  background: #50c2c9;
+  padding: 16px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  margin: 10px;
+}

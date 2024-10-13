@@ -46,3 +46,9 @@
   color: #fff;
   margin: 10px;
 }
+
+.disabled {
+  background-color: #b2e1f7;
+  color: rgb(80, 80, 80);
+  cursor: not-allowed;
+}

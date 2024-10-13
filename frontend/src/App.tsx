@@ -7,6 +7,15 @@ import AuthPage from "./pages/AuthPage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import GettingStartedPage from "./pages/GettingStartedPage";
+import MainLayout from "./layout/MainLayout";
+import DashboardPage from "./pages/DashboardPage";
+import EventsPage from "./pages/EventsPage";
+import CreateEventPage from "./pages/CreateEventPage";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import EventOverviewPage from "./pages/EventOverviewPage";
+import Protected from "./components/Auth/Protected";
+
+const queryClient = new QueryClient();
 
 function App() {
   const router = createBrowserRouter([
@@ -36,14 +45,46 @@ function App() {
         },
         {
           path: "/getting-started",
-          element: <GettingStartedPage />,
+          element: (
+            // <Protected>
+              <GettingStartedPage />
+            // </Protected>
+          ),
+        },
+      ],
+    },
+    {
+      path: "/dashboard",
+      element: (
+        <Protected>
+          <MainLayout />
+        </Protected>
+      ),
+      children: [
+        {
+          path: "",
+          element: <DashboardPage />,
+        },
+        {
+          path: "events",
+          element: <EventsPage />,
+        },
+        {
+          path: "events/create",
+          element: <CreateEventPage />,
+        },
+        {
+          path: "events/:id",
+          element: <EventOverviewPage />,
         },
       ],
     },
   ]);
   return (
     <>
-      <RouterProvider router={router} />
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
     </>
   );
 }

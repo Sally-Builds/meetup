@@ -63,3 +63,20 @@
 .checkboxes::-webkit-scrollbar-thumb:hover {
   background-color: #555; /* Darker on hover */
 }
+
+.grid {
+  padding: 10px;
+}
+
+.grid-item {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  border: 1px solid gray;
+}
+
+.disabled {
+  background-color: #b2e1f7;
+  color: rgb(80, 80, 80);
+  cursor: not-allowed;
+}
