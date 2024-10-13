@@ -5,16 +5,17 @@ import { StatusCodes } from "http-status-codes";
 
 
 export const CreateEventController = async (req: Request, res: Response) => {
-    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-    if (!files) {
-        throw new CustomError({ message: `cover image is Required`, code: StatusCodes.BAD_REQUEST });
+    const file = req.file as Express.Multer.File;
+
+    if (!file) {
+        throw new CustomError({ message: `cover image is Required o`, code: StatusCodes.BAD_REQUEST });
     }
 
-    if (!files['cover_image']) {
-        throw new CustomError({ message: `cover image is Required`, code: StatusCodes.BAD_REQUEST });
+    if (file.fieldname != 'cover_image') {
+        throw new CustomError({ message: `cover image is Required e`, code: StatusCodes.BAD_REQUEST });
     }
 
-    const cover_image = { buffer: files['cover_image'][0].buffer, mimetype: files['cover_image'][0].mimetype }
+    const cover_image = { buffer: file.buffer, mimetype: file.mimetype }
 
     const data = await createEvent(req.user._id, req.body, cover_image)
     res.status(200).json({ data })

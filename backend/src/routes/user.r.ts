@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { DeleteImageController, GetMeController, UploadImagesController, UploadProfileImageController } from "../controllers/user.c";
+import { DeleteImageController, GetMeController, UploadImagesController, UploadProfileImageController, updateProfileController } from "../controllers/user.c";
 import multer from "multer";
 import path from "path";
 import { CustomError } from "../utils/customError";
 import { authenticate } from "../middleware/authenticate.m";
+import { validationMiddleware } from "../middleware/validation.m";
+import { UpdateUserValidation } from "../validations/userSchema.v";
 
 
 const router = Router();
@@ -30,6 +32,7 @@ router.post('/upload-profile-image', authenticate, coverUpload, UploadProfileIma
 router.post('/upload-images', authenticate, imagesUpload, UploadImagesController)
 //delete image route
 router.post('/delete-image', authenticate, DeleteImageController)
+router.patch('/', authenticate, validationMiddleware(UpdateUserValidation), updateProfileController)
 
 router.route('/').get(authenticate, GetMeController)
 

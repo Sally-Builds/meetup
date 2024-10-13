@@ -25,13 +25,19 @@ const app: Application = express();
 const httpServer = createServer(app);
 
 const corsOptions = {
-    origin: '*', // Replace with your frontend URL
-    credentials: true, // This is important for cookies
+    origin: [
+        'http://127.0.0.1:3000',
+        'http://localhost:3000',
+        'http://localhost:3000/',
+        'http://192.168.43.69:3000/',
+        '*'], // Replace with your frontend URL
+    credentials: true,
 };
 
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser())
+app.use(express.urlencoded({ extended: true }));
 
 
 // app.options("*", cors());

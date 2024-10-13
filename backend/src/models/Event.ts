@@ -11,7 +11,8 @@ export interface IEvent {
     expected_attendees: number;
     cover_image: { url: string, publicId: string };
     user: Types.ObjectId,
-    slug: string
+    slug: string;
+    _id: string;
 }
 
 

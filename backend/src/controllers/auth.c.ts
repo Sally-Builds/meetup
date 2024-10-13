@@ -8,7 +8,7 @@ export const RegisterController = async (req: Request, res: Response) => {
         {
             httpOnly: true,
             sameSite: 'none',
-            // secure: true
+            secure: true
         })
 
     res.status(200).json({ data: { user, token: accessToken } })
@@ -21,11 +21,9 @@ export const LoginController = async (req: Request, res: Response) => {
         {
             httpOnly: true,
             sameSite: 'none',
-            // secure: true,
-            path: '/'
+            secure: true,
+            // path: '/'
         })
-
-    console.log('Cookie set:', res.getHeader('Set-Cookie'));
 
     res.status(200).json({ data: { user, token: accessToken } })
 }
@@ -38,8 +36,7 @@ export const RefreshTokenController = async (req: Request, res: Response) => {
     res.cookie('refresh_token', tokens.refresh_token, {
         httpOnly: true,
         sameSite: 'none',
-        // secure: req.secure || req.headers["x-forwarded-proto"] === "https",
-        // secure: true
+        secure: true
     })
 
     res.status(200).json({ data: { token: tokens.access_token }, statusCode: 200 })

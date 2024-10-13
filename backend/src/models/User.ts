@@ -3,10 +3,14 @@ import bcrypt from 'bcryptjs'
 
 export interface IUser {
     _id: string;
-    first_name: string;
-    last_name: string;
+    full_name: string;
+    username: string;
+    dob: string;
     email: string;
     password: string;
+    occupation: string;
+    gender: "male" | "female";
+    phone: string;
     interests: string[];
     is_verified: boolean;
     location: string;
@@ -15,11 +19,18 @@ export interface IUser {
 }
 
 const userSchema = new Schema<IUser>({
-    first_name: String,
-    last_name: String,
+    full_name: String,
+    username: String,
+    dob: String,
     email: String,
     password: String,
+    occupation: String,
+    phone: String,
     location: String,
+    gender: {
+        type: String,
+        enum: ["male", "female"]
+    },
     is_verified: {
         type: Boolean,
         default: false

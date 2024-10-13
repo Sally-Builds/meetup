@@ -7,9 +7,14 @@ import { createToken, verifyToken } from "../utils/token_cryptography";
 
 export const register = async (payload: IUser) => {
     const emailExists = await User.findOne({ email: payload.email })
+    const usernameExists = await User.findOne({ username: payload.username })
 
     if (emailExists) {
         throw new CustomError({ message: "Email already Exist", code: 400 })
+    }
+
+    if (usernameExists) {
+        throw new CustomError({ message: "Username already Exist", code: 400 })
     }
 
     const user = new User(payload);

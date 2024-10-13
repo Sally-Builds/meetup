@@ -3,6 +3,15 @@ import { uploadImage, deleteImage } from "../utils/cloudinary";
 import { CustomError } from "../utils/customError";
 import { IFileBuffer } from "../utils/interfaces";
 
+
+export const updateProfile = async (userId: string, payload: Partial<IUser>) => {
+    const user = await User.findByIdAndUpdate({ _id: userId }, payload, { new: true });
+
+    if (!user) throw new CustomError({ message: "user not found", code: 404 })
+
+    return user;
+}
+
 export const uploadProfileImage = async (userId: string, file: IFileBuffer) => {
     const user = await User.findById(userId).select('-password')
     if (!user) throw new CustomError({ message: "User not found", code: 404 });

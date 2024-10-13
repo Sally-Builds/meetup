@@ -23,7 +23,7 @@ const fileFilter = (req: any, file: any, cb: any) => {
 };
 
 const upload = multer({ storage: storage, fileFilter })
-const coverUpload = upload.fields([{ name: 'cover_image', maxCount: 1 }])
+const coverUpload = upload.single('cover_image')
 
 router.route('/').post(authenticate, coverUpload, validationMiddleware(CreateEventValidation), CreateEventController).get(authenticate, GetAllEventsController)
 router.route('/:slug').get(authenticate, GetEventController)
