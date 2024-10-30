@@ -14,6 +14,12 @@ import CreateEventPage from "./pages/CreateEventPage";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import EventOverviewPage from "./pages/EventOverviewPage";
 import Protected from "./components/Auth/Protected";
+import Tinder from "./pages/Tinder";
+import Chat from "./pages/Chat";
+import MessageList from "./pages/Messages";
+import FriendRequests from "./pages/Requests";
+import { ApolloProvider } from "@apollo/client";
+import { apolloClient } from "./apollo-client";
 
 const queryClient = new QueryClient();
 
@@ -77,13 +83,31 @@ function App() {
           path: "events/:slug",
           element: <EventOverviewPage />,
         },
+        {
+          path: "duo-meetup",
+          element: <Tinder />,
+        },
+        {
+          path: "requests",
+          element: <FriendRequests />,
+        },
+        {
+          path: "chat/:friendId",
+          element: <Chat />,
+        },
+        {
+          path: "messages",
+          element: <MessageList />,
+        },
       ],
     },
   ]);
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <ApolloProvider client={apolloClient}>
+          <RouterProvider router={router} />
+        </ApolloProvider>
       </QueryClientProvider>
     </>
   );

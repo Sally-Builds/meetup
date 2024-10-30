@@ -1,11 +1,18 @@
 import { create } from "zustand";
 
+export interface INotification { type: string, content: string, id: string }
+
 type AppStore = {
     isLoading: boolean;
     setIsLoading: (loadingState: boolean) => void;
     gettingStartedStep: number;
     setGettingStartedStep: (value: number) => void
     interests: { value: string, label: string }[]
+    notifications: INotification[]
+    setNotification: (notification: INotification) => void
+    clearAllNotifications: () => void
+    messageCount: number
+    setMessageCount: (count: number) => void
 };
 
 const interests = [
@@ -119,7 +126,7 @@ const interests = [
 ];
 
 
-export const useAppStore = create<AppStore>((set) => ({
+export const useAppStore = create<AppStore>((set, get) => ({
     isLoading: false,
     gettingStartedStep: 1,
     interests: interests.map((interest) => ({ value: interest, label: interest })),
@@ -128,5 +135,18 @@ export const useAppStore = create<AppStore>((set) => ({
     },
     setGettingStartedStep: (step) => {
         set(() => ({ gettingStartedStep: step }));
-    }
+    },
+    notifications: [],
+    setNotification: (notification) => {
+        console.log('notification saved')
+        const updatedNotifications = [...get().notifications, notification];
+        set(() => ({ notifications: updatedNotifications }));
+    },
+    clearAllNotifications: () => {
+        set({ notifications: [] });
+    },
+    messageCount: 0,
+    setMessageCount: (count) => {
+        set(() => ({ messageCount: count }))
+    },
 }));

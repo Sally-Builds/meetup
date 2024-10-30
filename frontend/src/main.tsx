@@ -9,12 +9,10 @@ import "./index.css";
 // const queryClient = new QueryClient();
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    {/* <QueryClientProvider client={queryClient}> */}
     <ChakraProvider>
       <ScaleFade in transition={{ enter: { duration: 2.5 } }}>
         <App />
       </ScaleFade>
     </ChakraProvider>
-    {/* </QueryClientProvider> */}
   </StrictMode>
 );

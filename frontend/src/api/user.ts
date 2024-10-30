@@ -57,6 +57,19 @@ export const login = async (data: { email: string, password: string }): Promise<
 
 export const getUser = async (): Promise<IUser> => {
     const token = localStorage.getItem('token')
+    const res = await API.get('/users/me', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+        }, withCredentials: true
+    });
+
+    console.log(res.data.data)
+    return res.data.data
+}
+
+export const getAllUsers = async (): Promise<IUser[]> => {
+    const token = localStorage.getItem('token')
     const res = await API.get('/users', {
         headers: {
             Authorization: `Bearer ${token}`,
