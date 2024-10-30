@@ -1,11 +1,13 @@
 import { Router } from "express";
-import { DeleteImageController, GetMeController, UploadImagesController, UploadProfileImageController, updateProfileController } from "../controllers/user.c";
+import { DeleteImageController, GetAllUsersController, GetMeController, UploadImagesController, UploadProfileImageController, updateProfileController } from "../controllers/user.c";
 import multer from "multer";
 import path from "path";
 import { CustomError } from "../utils/customError";
 import { authenticate } from "../middleware/authenticate.m";
 import { validationMiddleware } from "../middleware/validation.m";
 import { UpdateUserValidation } from "../validations/userSchema.v";
+import requestRouter from './request.r'
+import chatRouter from './chat.r'
 
 
 const router = Router();
@@ -28,13 +30,18 @@ const coverUpload = upload.fields([{ name: 'profile_image', maxCount: 1 }])
 const imagesUpload = upload.fields([{ name: 'images', maxCount: 5 }])
 
 
+router.use('/:userId/requests', requestRouter)
+router.use('/:friendId/chat', chatRouter)
+
+router.get('/me', authenticate, GetMeController)
+
 router.post('/upload-profile-image', authenticate, coverUpload, UploadProfileImageController)
 router.post('/upload-images', authenticate, imagesUpload, UploadImagesController)
 //delete image route
 router.post('/delete-image', authenticate, DeleteImageController)
 router.patch('/', authenticate, validationMiddleware(UpdateUserValidation), updateProfileController)
 
-router.route('/').get(authenticate, GetMeController)
+router.route('/').get(authenticate, GetAllUsersController)
 
 
 export default router;

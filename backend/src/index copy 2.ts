@@ -2,35 +2,22 @@ import express, { Request } from 'express';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { createServer } from 'http';
-import 'express-async-errors';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
+import { PubSub } from 'graphql-subscriptions';
+import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import DB from "./utils/DB";
 import { config } from "./utils/config";
-import { typeDefs, resolvers } from './graphql'
-import { formatError } from './utils/graphqlError';
 
 /**routes */
 import authRouter from './routes/auth.r'
-import userRouter from './routes/user.r'
-import eventRouter from './routes/event.r'
-import requestRouter from './routes/request.r'
-import chatRouter from './routes/chat.r'
-
-
-/**middlewares */
-import { errorHandler } from './middleware/error.m';
-
-import { PubSub } from "graphql-subscriptions";
-export const pubsub = new PubSub();
 
 async function startServer() {
     const app = express();
-    const httpServer = createServer(app);
 
     const corsOptions = {
         origin: [
@@ -49,15 +36,72 @@ async function startServer() {
 
 
     app.use('/api/auth', authRouter)
-    app.use('/api/users', userRouter)
-    app.use('/api/events', eventRouter)
-    app.use('/api/requests', requestRouter)
-    app.use('/api/chat', chatRouter)
 
 
-    app.use(errorHandler)
+    const httpServer = createServer(app);
+    const pubsub = new PubSub();
+
+    const typeDefs = `
+      type Query {
+        messages: String
+      }
+      
+      type Mutation {
+        sendMessage(content: String!): String
+      }
+      
+      type Subscription {
+        messageAdded: String
+      }
+      
+      type Message {
+        id: ID!
+        content: String!
+        user: User!
+      }
+      
+      type User {
+        id: ID!
+        username: String!
+      }
+    `;
+
+    const MESSAGE_ADDED = 'MESSAGE_ADDED';
+
+    const resolvers = {
+        Query: {
+            messages: (parent: any, args: any, context: any) => {
+                return "Hello World";
+            },
+        },
+        Mutation: {
+            sendMessage: (parent: any, { content }: { content: string }, context: any) => {
+                pubsub.publish(MESSAGE_ADDED, { messageAdded: content });
+                return `Message sent: ${content}`;
+            },
+        },
+        Subscription: {
+            messageAdded: {
+                subscribe: () => pubsub.asyncIterator([MESSAGE_ADDED]),
+            },
+        },
+    };
 
     const schema = makeExecutableSchema({ typeDefs, resolvers });
+
+    // const authenticate = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    //     const token = req.headers.authorization?.split(' ')[1];
+    //     if (token) {
+    //         try {
+    //             const user = jwt.verify(token, 'your-secret-key');
+    //             (req as any).user = user;
+    //         } catch (error) {
+    //             console.error('Invalid token:', error);
+    //         }
+    //     }
+    //     next();
+    // };
+
     const server = new ApolloServer({
         schema,
         plugins: [
@@ -72,7 +116,6 @@ async function startServer() {
                 },
             },
         ],
-        formatError
     });
 
     const wsServer = new WebSocketServer({
@@ -84,9 +127,7 @@ async function startServer() {
         {
             schema,
             context: (ctx) => {
-                // console.log(ctx.connectionParams, 'context')
-                // const token = ctx.connectionParams?.authorization as string;
-                // console.log(token)
+                const token = ctx.connectionParams?.authentication as string;
                 // if (token) {
                 //     try {
                 //         // const user = jwt.verify(token, 'your-secret-key');
@@ -104,17 +145,11 @@ async function startServer() {
 
     await server.start();
 
-    app.use('/graphql', expressMiddleware(server, {
-        context: async ({ req }) => {
-            // console.log('from here', req.headers.authorization)
-            return {
-                token: req.headers.authorization,
-                cookies: req.cookies
-            }
-        }
+    app.use('/graphql', /**authenticate,*/ expressMiddleware(server, {
+        context: async ({ req: Request }) => ({ pubsub }),
     }));
 
-    const PORT = config.port;
+    const PORT = 4000;
     const db = new DB(console);
     db.connect(config.mongodbUri);
     httpServer.listen(PORT, () => {

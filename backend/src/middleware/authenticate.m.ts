@@ -10,8 +10,6 @@ export async function authenticate(
   next: NextFunction,
 ): Promise<void> {
   const bearer = req.headers.authorization;
-  console.log(req.cookies)
-  console.log(bearer)
 
   if (!bearer || !bearer.startsWith('Bearer')) {
     return next(
@@ -48,3 +46,30 @@ export async function authenticate(
     next(new CustomError({ message: 'access token invalid', code: 401, ctx: { data: 'invalid bearer token' } }))
   }
 }
+
+
+export async function graphqlAuthenticate(token: string) {
+  const bearer = token;
+  // console.log(req.cookies)
+  // console.log(bearer)
+
+  if (!bearer || !bearer.startsWith('Bearer')) {
+    throw new CustomError({ message: 'Unauthorized Access', code: 401, ctx: { data: 'invalid bearer token' } })
+  }
+
+  let accessToken = bearer.split('Bearer ')[1].trim();
+  try {
+    const TokenPayload = await verifyToken(accessToken)
+    console.log(TokenPayload, "tokenPayload")
+
+    if (TokenPayload instanceof jwt.JsonWebTokenError) throw new CustomError({ message: 'refresh token expired.', code: 403, ctx: { data: 'refresh token expired.' } })
+
+    const user = await User.findOne({ _id: TokenPayload.id }, { __v: 0, password: 0 })
+
+    if (!user) throw new CustomError({ message: 'refresh token expired.', code: 403, ctx: { data: 'refresh token expired.' } })
+
+    return user
+  } catch (e) {
+    throw new CustomError({ message: 'refresh token expired.', code: 403, ctx: { data: 'refresh token expired.' } })
+  }
+} 

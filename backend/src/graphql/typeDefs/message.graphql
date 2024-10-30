@@ -1,0 +1,42 @@
+type Message {
+  senderId: String!
+  content: String!
+  status: String!
+  _id: String!
+}
+
+type User {
+  _id: ID!
+  username: String!
+  full_name: String!
+  profile_image: Image!
+}
+
+type Image {
+  url: String!
+  publicId: String!
+}
+
+type Chat {
+  _id: String!
+  createdAt: String!
+  updatedAt: String!
+  messages: [Message]!
+  participants: [User]!
+}
+
+type Query {
+  getChat(friendId: String!): Chat
+}
+
+type Mutation {
+  sendMessage(to: String!, from: String!, content: String!): String
+}
+
+type Sender {
+  id: String!
+}
+
+type Subscription {
+  messageSentNotification(receiver_id: String!): Sender!
+}

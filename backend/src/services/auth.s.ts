@@ -3,6 +3,7 @@ import { CustomError } from "../utils/customError";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { createToken, verifyToken } from "../utils/token_cryptography";
+import { pubsub } from "..";
 
 
 export const register = async (payload: IUser) => {
@@ -45,6 +46,8 @@ export const login = async (email: string, password: string) => {
 
     const accessToken = createToken(user.id, '12m')
     const refreshToken = createToken(user.id, '30d')
+
+    pubsub.publish("MESSAGE_ADDED", { messageAdded: "someone logged in" })
 
     return {
         user: user.toObject({

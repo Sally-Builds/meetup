@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import User, { IUser } from "../models/User";
 import { uploadImage, deleteImage } from "../utils/cloudinary";
 import { CustomError } from "../utils/customError";
@@ -25,6 +26,7 @@ export const uploadProfileImage = async (userId: string, file: IFileBuffer) => {
     return user
 
 }
+
 export const uploadImages = async (userId: string, files: IFileBuffer[]) => {
     const user = await User.findById(userId).select('-password')
     if (!user) throw new CustomError({ message: "User not found", code: 404 });
@@ -45,3 +47,76 @@ export const deleteImageService = async (publicId: string) => {
 
     return data
 }
+
+// export const getUsers = async (me: string) => {
+//     const users = await User.find({ _id: { $ne: me } });
+
+//     return { length: users.length, users }
+// }
+
+export const getUsers = async (myId: string) => {
+    try {
+        const users = await User.aggregate([
+            {
+                $match: {
+                    _id: { $ne: new Types.ObjectId(myId) }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'requests',
+                    let: { userId: '$_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $or: [
+                                        // Check if current user is involved with this user in any request
+                                        {
+                                            $and: [
+                                                { $eq: ['$sender', new Types.ObjectId(myId)] },
+                                                { $eq: ['$receiver', '$$userId'] }
+                                            ]
+                                        },
+                                        {
+                                            $and: [
+                                                { $eq: ['$receiver', new Types.ObjectId(myId)] },
+                                                { $eq: ['$sender', '$$userId'] }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: 'requests'
+                }
+            },
+            {
+                $match: {
+                    requests: { $size: 0 }
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    full_name: 1,
+                    username: 1,
+                    dob: 1,
+                    email: 1,
+                    occupation: 1,
+                    gender: 1,
+                    phone: 1,
+                    interests: 1,
+                    location: 1,
+                    profile_image: 1,
+                    images: 1
+                }
+            }
+        ]);
+
+        return users;
+    } catch (error) {
+        throw error;
+    }
+};

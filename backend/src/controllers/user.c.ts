@@ -1,12 +1,18 @@
 import { Request, Response } from "express";
 import { CustomError } from "../utils/customError";
 import { StatusCodes } from "http-status-codes";
-import { updateProfile, uploadImages, uploadProfileImage } from "../services/user.s";
+import { getUsers, updateProfile, uploadImages, uploadProfileImage } from "../services/user.s";
 
 
 export const GetMeController = async (req: Request, res: Response) => {
     const user = req.user;
     res.status(200).json({ data: user })
+}
+
+export const GetAllUsersController = async (req: Request, res: Response) => {
+    const data = await getUsers(req.user._id)
+
+    res.status(200).json({ data })
 }
 
 export const updateProfileController = async (req: Request, res: Response) => {
