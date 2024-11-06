@@ -6,6 +6,11 @@
   background: #50c2c9;
 }
 
+.navQuick {
+  display: flex;
+  gap: 12px;
+}
+
 .nav ul {
   display: flex;
   gap: 10px;

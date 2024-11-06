@@ -1,4 +1,14 @@
-import { Button, Grid, GridItem, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Card,
+  Grid,
+  GridItem,
+  CardHeader,
+  CardBody,
+  Heading,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import styles from "./index.module.css";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
@@ -70,6 +80,10 @@ const EventsPage = () => {
     return isPast;
   };
 
+  const formatDate = (date: Date) => {
+    return moment(date).format("Do MMMM, YYYY h:mm A");
+  };
+
   return (
     <>
       {data && (
@@ -100,7 +114,7 @@ const EventsPage = () => {
               </button>
             </div>
           </div>
-          <Grid
+          {/* <Grid
             templateColumns="repeat(2, 1fr)"
             gap={0.5}
             className={styles["grid"]}
@@ -124,7 +138,24 @@ const EventsPage = () => {
                 />
               </GridItem>
             ))}
-          </Grid>
+          </Grid> */}
+          <Stack>
+            {filteredData.map((el) => (
+              <Card
+                size="sm"
+                className={styles["card"]}
+                onClick={() => navigate(el.slug)}
+              >
+                <CardHeader className={styles["card-header"]}>
+                  <Heading size="md" className={styles["title"]}>
+                    {el.name}
+                  </Heading>
+                  <div>{formatDate(el.date)}</div>
+                </CardHeader>
+                <CardBody color="fg.muted">{el.description}</CardBody>
+              </Card>
+            ))}
+          </Stack>
         </div>
       )}
     </>

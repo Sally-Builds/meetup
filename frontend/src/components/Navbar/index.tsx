@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { getPendingCount, getRequests } from "../../api/request";
 import { useQuery } from "@tanstack/react-query";
 import { getUnreadCount } from "../../api/chat";
+import { useEffect, useState } from "react";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const [msgCount, setMsgCount] = useState(0);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["requests_count"],
@@ -16,6 +18,12 @@ const Navbar = () => {
     queryKey: ["msg_unread_count"],
     queryFn: () => getUnreadCount(),
   });
+
+  useEffect(() => {
+    if (unreadCount) {
+      setMsgCount(unreadCount);
+    }
+  }, [unreadCount]);
 
   if (isLoading) return <>...loading</>;
 
@@ -28,16 +36,38 @@ const Navbar = () => {
     <>
       <div className={styles["container"]}>
         <nav className={styles["nav"]}>
-          <div>
+          <div className={styles.navQuick}>
             <button onClick={() => navigate(-1)}>
               <i className="fa-solid fa-chevron-left"></i>
+            </button>
+            <button
+              className={styles["icon-button"]}
+              onClick={() => navigate("/dashboard")}
+            >
+              <i className="fa-solid fa-house"></i>
             </button>
           </div>
 
           <ul>
             <li>
-              <button type="button" className={styles["icon-button"]}>
-                <i className="fa-solid fa-sliders"></i>
+              <button
+                type="button"
+                className={styles["icon-button"]}
+                onClick={() => navigate("/dashboard/messages")}
+              >
+                <i className="fa-regular fa-comments"></i>
+                {msgCount > 0 && (
+                  <span className="icon-button__badge">{msgCount}</span>
+                )}
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                className={styles["icon-button"]}
+                onClick={() => navigate("/dashboard/connections")}
+              >
+                <i className="fa-solid fa-people-arrows"></i>
               </button>
             </li>
             <li>
@@ -56,12 +86,9 @@ const Navbar = () => {
               <button
                 type="button"
                 className={styles["icon-button"]}
-                onClick={() => navigate("/dashboard/messages")}
+                onClick={() => navigate("/dashboard/settings")}
               >
-                <i className="fa-regular fa-comments"></i>
-                {unreadCount && unreadCount > 0 && (
-                  <span className="icon-button__badge">{unreadCount}</span>
-                )}
+                <i className="fa-solid fa-sliders"></i>
               </button>
             </li>
           </ul>

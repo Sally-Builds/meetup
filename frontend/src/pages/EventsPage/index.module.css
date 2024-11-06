@@ -26,3 +26,12 @@
   flex-direction: column;
   border: 1px solid gray;
 }
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card {
+  cursor: pointer;
+}

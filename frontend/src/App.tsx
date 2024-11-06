@@ -20,6 +20,8 @@ import MessageList from "./pages/Messages";
 import FriendRequests from "./pages/Requests";
 import { ApolloProvider } from "@apollo/client";
 import { apolloClient } from "./apollo-client";
+import SettingsPage from "./pages/SettingsPage";
+import ConnectionsPage from "./pages/ConnectionsPage";
 
 const queryClient = new QueryClient();
 
@@ -98,6 +100,14 @@ function App() {
         {
           path: "messages",
           element: <MessageList />,
+        },
+        {
+          path: "settings",
+          element: <SettingsPage />,
+        },
+        {
+          path: "connections",
+          element: <ConnectionsPage />,
         },
       ],
     },

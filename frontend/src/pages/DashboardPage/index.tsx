@@ -4,6 +4,7 @@ import styles from "./index.module.css";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "../../api/user";
 import { useEffect } from "react";
+import { Tooltip } from "@chakra-ui/react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -39,18 +40,29 @@ const Dashboard = () => {
                 group event.
               </span>
             </div>
-            <button
-              className={styles["btn"]}
-              onClick={() => navigate("duo-meetup")}
+            <Tooltip
+              label="Connect one and one with people of shared interests."
+              aria-label="A tooltip"
             >
-              Duo Meetup
-            </button>
-            <button
-              className={styles["btn"]}
-              onClick={() => navigate("events")}
+              <button
+                className={styles["btn"]}
+                onClick={() => navigate("duo-meetup")}
+              >
+                Meetup Duo
+              </button>
+            </Tooltip>
+
+            <Tooltip
+              label="Have an event with multiple people of shared interests"
+              aria-label="A tooltip"
             >
-              Multi Meetup
-            </button>
+              <button
+                className={styles["btn"]}
+                onClick={() => navigate("events")}
+              >
+                Multi Meetup
+              </button>
+            </Tooltip>
           </div>
         </>
       )}
