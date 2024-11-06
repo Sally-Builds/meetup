@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getMyRequests, getPendingRequestCount, sendRequest, updateRequest } from "../services/request.s";
+import { getConnections, getMyRequests, getPendingRequestCount, sendRequest, updateRequest } from "../services/request.s";
 import { CustomError } from "../utils/customError";
 
 
@@ -33,4 +33,10 @@ export const getPendingRequestCountController = async (req: Request, res: Respon
     const count = await getPendingRequestCount(req.user._id)
 
     res.status(200).json({ data: count })
+}
+
+export const getConnectionsController = async (req: Request, res: Response) => {
+    const data = await getConnections(req.user._id)
+
+    res.status(200).json({ data })
 }

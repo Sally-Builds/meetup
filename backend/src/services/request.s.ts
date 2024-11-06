@@ -59,3 +59,15 @@ export const getMyRequests = async (user: string, status: "pending" | "accepted"
 export const getPendingRequestCount = async (user: string) => {
     return await Request.countDocuments({ receiver: user, status: 'pending' })
 }
+
+export const getConnections = async (user: string) => {
+    const connections = await Request.find({
+        $and: [
+            { status: "accepted" },
+            { $or: [{ sender: user }, { receiver: user }] }
+        ]
+    }).populate({ path: 'sender', model: "User", select: 'full_name  username profile_image' })
+        .populate({ path: 'receiver', model: "User", select: 'full_name  username profile_image' });
+
+    return { connections, length: connections.length }
+}
