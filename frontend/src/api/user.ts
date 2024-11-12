@@ -13,7 +13,8 @@ export interface IUser {
     is_verified: boolean;
     location: string;
     profile_image: { url: string, publicId: string };
-    images: { url: string, publicId: string }[]
+    images: { url: string, publicId: string }[];
+    similarityScore: number;
 }
 
 export interface IUpdateUserDTO {
@@ -55,6 +56,27 @@ export const login = async (data: { email: string, password: string }): Promise<
     return res.data.data
 }
 
+export const isEmailExist = async (data: { email: string }): Promise<boolean> => {
+    const res = await API.post('/auth/is-email', data, { headers: { "Content-Type": "application/json" }, withCredentials: true })
+
+    console.log(res.data.data)
+
+    return res.data.data.isEmail
+}
+
+export const isUsernameExist = async (data: { username: string }): Promise<boolean> => {
+    const res = await API.post('/auth/is-username', data, { headers: { "Content-Type": "application/json" }, withCredentials: true })
+
+    console.log(res.data.data)
+
+    return res.data.data.isUsername
+}
+
+export const logout = async () => {
+    await API.get('/auth/logout', { headers: { "Content-Type": "application/json" }, withCredentials: true })
+    localStorage.removeItem('token')
+}
+
 export const getUser = async (): Promise<IUser> => {
     const token = localStorage.getItem('token')
     const res = await API.get('/users/me', {
@@ -77,8 +99,17 @@ export const getAllUsers = async (): Promise<IUser[]> => {
         }, withCredentials: true
     });
 
+    const res2 = await API.get('/users/similar-interests', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+        }, withCredentials: true
+    });
+
+    console.log(res2.data.data, 'similar interests')
+
     console.log(res.data.data)
-    return res.data.data
+    return res2.data.data
 }
 
 export const uploadImage = async ({ type, form }: { form: FormData, type: "profile" | "images" }) => {

@@ -22,6 +22,7 @@ import { ApolloProvider } from "@apollo/client";
 import { apolloClient } from "./apollo-client";
 import SettingsPage from "./pages/SettingsPage";
 import ConnectionsPage from "./pages/ConnectionsPage";
+import UpdatePasswordPage from "./pages/updatePassword";
 
 const queryClient = new QueryClient();
 
@@ -108,6 +109,10 @@ function App() {
         {
           path: "connections",
           element: <ConnectionsPage />,
+        },
+        {
+          path: "settings/update-password",
+          element: <UpdatePasswordPage />,
         },
       ],
     },

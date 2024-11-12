@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { DeleteImageController, GetAllUsersController, GetMeController, UploadImagesController, UploadProfileImageController, updateProfileController } from "../controllers/user.c";
+import { DeleteImageController, GetAllUsersController, GetMeController, UploadImagesController, UploadProfileImageController, getUsersWithSimilarInterestController, updateProfileController } from "../controllers/user.c";
 import multer from "multer";
 import path from "path";
 import { CustomError } from "../utils/customError";
@@ -37,6 +37,7 @@ router.get('/me', authenticate, GetMeController)
 
 router.post('/upload-profile-image', authenticate, coverUpload, UploadProfileImageController)
 router.post('/upload-images', authenticate, imagesUpload, UploadImagesController)
+router.get('/similar-interests', authenticate, getUsersWithSimilarInterestController)
 //delete image route
 router.post('/delete-image', authenticate, DeleteImageController)
 router.patch('/', authenticate, validationMiddleware(UpdateUserValidation), updateProfileController)

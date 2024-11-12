@@ -1,25 +1,29 @@
 import { useNavigate } from "react-router-dom";
 import { authPageConstants } from "../../constants/texts.c";
 import styles from "./index.module.css";
-import { Input, InputGroup, InputLeftAddon } from "@chakra-ui/react";
+import { Input, InputGroup, InputLeftAddon, useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { FormData, schema } from "./schema";
 import { Select } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
-import { signup } from "../../api/user";
+import { signup, isEmailExist, isUsernameExist } from "../../api/user";
 
 const SignupPage = () => {
   const [step, setStep] = useState(0);
   const [loading, setIsLoading] = useState(false);
+  const [checkingAvailability, setCheckingAvailability] = useState(false);
   const navigate = useNavigate();
+  const toast = useToast();
+
   const {
     control,
     handleSubmit,
     trigger,
     reset,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -43,6 +47,53 @@ const SignupPage = () => {
     },
   });
 
+  const checkAvailability = async () => {
+    try {
+      setCheckingAvailability(true);
+      const values = getValues();
+      let msg = "okay";
+
+      // Check both email and username simultaneously
+      const [isEmailAvailable, isUsernameAvailable] = await Promise.all([
+        isEmailExist({ email: values.email }),
+        isUsernameExist({ username: values.username }),
+      ]);
+
+      if (isEmailAvailable) {
+        toast({
+          title: "Error",
+          description: "Email already exists",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        msg = "no";
+      }
+      if (isUsernameAvailable) {
+        toast({
+          title: "Error",
+          description: "Username already exists",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        msg = "no";
+      }
+      return msg;
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "sth went wrong",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    } finally {
+      setCheckingAvailability(false);
+    }
+  };
+
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     console.log(data);
@@ -59,6 +110,10 @@ const SignupPage = () => {
     ]);
     // if (isStepValid) setStep(1);
     if (isStepValid) {
+      const isAvailable = await checkAvailability();
+
+      if (isAvailable == "no") return;
+
       setValue("password", "");
       setValue("confirmPassword", "");
       setStep(1);
@@ -264,6 +319,15 @@ const SignupPage = () => {
                 Next
               </button>
             ) : (
+              // <button
+              //   className={`${styles["btn"]} ${
+              //     (loading || checkingAvailability) && styles["disabled"]
+              //   }`}
+              //   onClick={nextStep}
+              //   disabled={loading || checkingAvailability}
+              // >
+              //   {checkingAvailability ? "Checking..." : "Next"}
+              // </button>
               <button
                 className={`${styles["btn"]} ${loading && styles["disabled"]}`}
                 type="submit"

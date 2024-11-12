@@ -155,6 +155,15 @@ const Tinder: React.FC = () => {
           </>
         )}
       </Stack>
+      <Stack>
+        {data && data.length > 0 && canSwipe > 0 && (
+          <div>
+            <Badge>
+              Similarity Score: {data[currentIndex].similarityScore}
+            </Badge>
+          </div>
+        )}
+      </Stack>
       <div className={styles["buttons"]}>
         <button
           style={{ backgroundColor: !canSwipe ? "#c3c4d3" : undefined }}

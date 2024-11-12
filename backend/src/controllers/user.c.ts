@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { CustomError } from "../utils/customError";
 import { StatusCodes } from "http-status-codes";
-import { getUsers, updateProfile, uploadImages, uploadProfileImage } from "../services/user.s";
+import { findUsersWithSimilarInterests, getUsers, updateProfile, uploadImages, uploadProfileImage } from "../services/user.s";
 
 
 export const GetMeController = async (req: Request, res: Response) => {
@@ -11,6 +11,12 @@ export const GetMeController = async (req: Request, res: Response) => {
 
 export const GetAllUsersController = async (req: Request, res: Response) => {
     const data = await getUsers(req.user._id)
+
+    res.status(200).json({ data })
+}
+
+export const getUsersWithSimilarInterestController = async (req: Request, res: Response) => {
+    const data = await findUsersWithSimilarInterests(req.user._id);
 
     res.status(200).json({ data })
 }

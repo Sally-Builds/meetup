@@ -37,6 +37,20 @@ export const register = async (payload: IUser) => {
 }
 
 
+export const isEmail = async (email: string) => {
+    const user = await User.findOne({ email });
+
+    console.log(user, 'email')
+    return !!user;
+}
+
+export const isUsername = async (username: string) => {
+    const user = await User.findOne({ username });
+
+    console.log(user, 'username')
+    return !!user;
+}
+
 export const login = async (email: string, password: string) => {
     const user = await User.findOne({ email })
 
@@ -47,7 +61,7 @@ export const login = async (email: string, password: string) => {
     const accessToken = createToken(user.id, '12m')
     const refreshToken = createToken(user.id, '30d')
 
-    pubsub.publish("MESSAGE_ADDED", { messageAdded: "someone logged in" })
+    // pubsub.publish("MESSAGE_ADDED", { messageAdded: "someone logged in" })
 
     return {
         user: user.toObject({
@@ -78,5 +92,40 @@ export const refreshToken = async (refresh_token: string) => {
         }
     } catch (e) {
         throw new CustomError({ message: 'refresh token invalid', code: 401, ctx: { data: 'invalid bearer token' } })
+    }
+}
+
+export const updatePassword = async (email: string, newPassword: string, oldPassword: string) => {
+    const user = await User.findOne({ email })
+
+    if (!user) throw new CustomError({ message: "UnAuthorized", code: 401 })
+
+    if (!(await bcrypt.compare(oldPassword, user.password))) throw new CustomError({ message: "UnAuthorized", code: 401 });
+
+    user.password = newPassword;
+
+    user.save();
+
+    const accessToken = createToken(user.id, '12m')
+    const refreshToken = createToken(user.id, '30d')
+
+    return {
+        user: user.toObject({
+            transform: (doc, ret) => {
+                delete ret.password;
+            }
+        }),
+        accessToken,
+        refreshToken
+    }
+}
+
+export const logout = async () => {
+    const accessToken = createToken('jwt', '12m')
+    const refreshToken = createToken('jwt', '30d')
+
+    return {
+        accessToken,
+        refreshToken
     }
 }

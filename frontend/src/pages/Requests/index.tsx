@@ -14,7 +14,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
-const filterOptions = ["Pending", "Accepted", "Rejected"];
+const filterOptions = ["Accepted", "Pending", "Rejected"];
 const FriendRequests = () => {
   const [filterValue, setFilterValue] = useState(filterOptions[0]);
   const [filteredData, setFilteredData] = useState<IRequest[]>([]);

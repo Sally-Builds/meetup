@@ -1,8 +1,9 @@
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import User, { IUser } from "../models/User";
 import { uploadImage, deleteImage } from "../utils/cloudinary";
 import { CustomError } from "../utils/customError";
 import { IFileBuffer } from "../utils/interfaces";
+import Request from "../models/Request";
 
 
 export const updateProfile = async (userId: string, payload: Partial<IUser>) => {
@@ -47,12 +48,6 @@ export const deleteImageService = async (publicId: string) => {
 
     return data
 }
-
-// export const getUsers = async (me: string) => {
-//     const users = await User.find({ _id: { $ne: me } });
-
-//     return { length: users.length, users }
-// }
 
 export const getUsers = async (myId: string) => {
     try {
@@ -119,4 +114,97 @@ export const getUsers = async (myId: string) => {
     } catch (error) {
         throw error;
     }
+};
+
+
+interface MatchedUser extends IUser {
+    sharedInterests: string[];
+    similarityScore: number;
+}
+
+export const findUsersWithSimilarInterests = async (
+    userId: string,
+    page: number = 1,
+    limit: number = 1000
+): Promise<MatchedUser[]> => {
+    const skip = (page - 1) * limit;
+
+    // Get the current user's interests
+    const currentUser = await User.findById(userId);
+    if (!currentUser) {
+        throw new Error('User not found');
+    }
+
+    // Get IDs of users who are friends or have pending requests
+    const requests = await Request.find({
+        $or: [
+            { sender: userId },
+            { receiver: userId }
+        ],
+        status: { $in: ['accepted', 'pending'] }
+    });
+
+    // Extract all user IDs from requests (both sender and receiver)
+    const excludeUserIds = requests.reduce((acc: mongoose.Types.ObjectId[], request) => {
+        const senderId = request.sender as unknown as mongoose.Types.ObjectId;
+        const receiverId = request.receiver as unknown as mongoose.Types.ObjectId;
+
+        if (senderId.toString() !== userId) {
+            acc.push(senderId);
+        }
+        if (receiverId.toString() !== userId) {
+            acc.push(receiverId);
+        }
+        return acc;
+    }, []);
+
+
+    const users = await User.aggregate([
+        // Exclude the current user and friends/pending requests
+        {
+            $match: {
+                $and: [
+                    { _id: { $ne: new mongoose.Types.ObjectId(userId) } },
+                    { _id: { $nin: excludeUserIds } }
+                ]
+            }
+        },
+        // Calculate shared interests
+        {
+            $addFields: {
+                sharedInterests: {
+                    $setIntersection: ['$interests', currentUser.interests]
+                }
+            }
+        },
+        // Calculate similarity score
+        {
+            $addFields: {
+                similarityScore: { $size: '$sharedInterests' }
+            }
+        },
+        // Only include users with at least one shared interest
+        {
+            $match: {
+                similarityScore: { $gt: 0 }
+            }
+        },
+        // Sort by similarity score (highest first)
+        {
+            $sort: {
+                similarityScore: -1
+            }
+        },
+        // Pagination
+        { $skip: skip },
+        { $limit: limit },
+        // Exclude sensitive fields
+        {
+            $project: {
+                password: 0,
+            }
+        }
+    ]);
+
+    return users;
 };
