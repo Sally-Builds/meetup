@@ -145,6 +145,7 @@ const EventsPage = () => {
                 size="sm"
                 className={styles["card"]}
                 onClick={() => navigate(el.slug)}
+                key={el.slug}
               >
                 <CardHeader className={styles["card-header"]}>
                   <Heading size="md" className={styles["title"]}>

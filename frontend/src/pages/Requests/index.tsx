@@ -8,7 +8,6 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Stack,
   useToast,
 } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -31,10 +30,10 @@ const FriendRequests = () => {
   const { mutateAsync: updateRequestMutation } = useMutation({
     mutationFn: updateRequest,
     onSuccess: (data) => {
-      // console.log(data);
+      setFilterValue("Accepted");
       toast({
         title: "Friend Request Updated.",
-        description: "Other Users will be able to see your event.",
+        description: "You can now start chatting with this user.",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -53,6 +52,14 @@ const FriendRequests = () => {
       // setIsLoading(false);
     },
   });
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      if (data.filter((request) => request.status == "pending").length > 0) {
+        setFilterValue("Pending");
+      }
+    }
+  }, [data]);
 
   useEffect(() => {
     filterFn(filterValue);

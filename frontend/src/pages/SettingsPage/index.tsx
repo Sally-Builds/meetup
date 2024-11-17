@@ -10,7 +10,14 @@ const options = [
     title: "Account",
     description: "View and Update your profile",
     icon: "fa-solid fa-user",
-    link: "dashboard/update-password",
+    link: "/dashboard/settings/profile",
+  },
+  {
+    title: "Update Interests",
+    description:
+      "Have you got some new interests? add them so you could be connected with people with similar interests",
+    icon: "fa-regular fa-face-laugh-wink",
+    link: "/dashboard/settings/update-interests",
   },
   {
     title: "Change Password",
@@ -18,18 +25,6 @@ const options = [
     icon: "fa-solid fa-lock",
     link: "/dashboard/settings/update-password",
   },
-  {
-    title: "Deactivate Account",
-    description: "You want to take a time off? Deactivate your account",
-    icon: "fa-solid fa-circle-xmark",
-    link: "dashboard/update-password",
-  },
-  // {
-  //   title: "Logout",
-  //   description: "Time to sign out",
-  //   icon: "fa-solid fa-power-off",
-  //   link: "dashboard/update-password",
-  // },
 ];
 const SettingsPage = () => {
   const navigate = useNavigate();

@@ -23,6 +23,8 @@ import { apolloClient } from "./apollo-client";
 import SettingsPage from "./pages/SettingsPage";
 import ConnectionsPage from "./pages/ConnectionsPage";
 import UpdatePasswordPage from "./pages/updatePassword";
+import ProfilePage from "./pages/Profile";
+import UpdateInterestPage from "./pages/UpdateInterests";
 
 const queryClient = new QueryClient();
 
@@ -113,6 +115,14 @@ function App() {
         {
           path: "settings/update-password",
           element: <UpdatePasswordPage />,
+        },
+        {
+          path: "settings/profile",
+          element: <ProfilePage />,
+        },
+        {
+          path: "settings/update-interests",
+          element: <UpdateInterestPage />,
         },
       ],
     },

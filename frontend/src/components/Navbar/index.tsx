@@ -1,13 +1,29 @@
 import styles from "./index.module.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getPendingCount, getRequests } from "../../api/request";
 import { useQuery } from "@tanstack/react-query";
 import { getUnreadCount } from "../../api/chat";
 import { useEffect, useState } from "react";
 
+enum AllLoggedInRoutes {
+  DASHBOARD = "/dashboard",
+  MEETUP_DUO = "/dashboard/duo-meetup",
+  MEETUP_MULTI = "/dashboard/events",
+  EVENT_OVERVIEW = "/dashboard/events/",
+  CREATE_EVENT = "/dashboard/events/create",
+  MESSAGES = "/dashboard/messages",
+  CONNECTIONS = "/dashboard/connections",
+  REQUESTS = "/dashboard/requests",
+  PROFILE = "/dashboard/settings/profile",
+  UPDATE_INTERESTS = "/dashboard/settings/update-interests",
+  UPDATE_PASSWORD = "/dashboard/settings/update-password",
+  SETTINGS = "/dashboard/settings",
+}
+
 const Navbar = () => {
   const navigate = useNavigate();
   const [msgCount, setMsgCount] = useState(0);
+  const location = useLocation();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["requests_count"],
@@ -17,6 +33,9 @@ const Navbar = () => {
   const { data: unreadCount } = useQuery({
     queryKey: ["msg_unread_count"],
     queryFn: () => getUnreadCount(),
+    staleTime: 0, // Data is considered stale immediately
+    refetchOnMount: true, // Refetch when component mounts
+    refetchOnWindowFocus: true,
   });
 
   useEffect(() => {
@@ -29,15 +48,42 @@ const Navbar = () => {
 
   if (error) return <>error</>;
 
-  if (data) {
-    console.log(data, "count");
-  }
+  const goBack = () => {
+    console.log(location.pathname);
+    switch (location.pathname) {
+      case AllLoggedInRoutes.MEETUP_DUO:
+      case AllLoggedInRoutes.MESSAGES:
+      case AllLoggedInRoutes.CONNECTIONS:
+      case AllLoggedInRoutes.MEETUP_MULTI:
+      case AllLoggedInRoutes.SETTINGS:
+        navigate(AllLoggedInRoutes.DASHBOARD);
+        break;
+      case AllLoggedInRoutes.CREATE_EVENT:
+        navigate(AllLoggedInRoutes.MEETUP_MULTI);
+        break;
+      case AllLoggedInRoutes.PROFILE:
+      case AllLoggedInRoutes.UPDATE_INTERESTS:
+      case AllLoggedInRoutes.UPDATE_PASSWORD:
+        navigate(AllLoggedInRoutes.SETTINGS);
+        break;
+    }
+    const chatExp = /^\/dashboard\/chat\/.*/;
+    if (chatExp.test(location.pathname)) {
+      navigate(AllLoggedInRoutes.MESSAGES);
+    }
+    const eventExp = /^\/dashboard\/events\/.*/;
+    if (eventExp.test(location.pathname)) {
+      navigate(AllLoggedInRoutes.MEETUP_MULTI);
+    }
+    console.log(location.pathname, "here is my location");
+  };
+
   return (
     <>
       <div className={styles["container"]}>
         <nav className={styles["nav"]}>
           <div className={styles.navQuick}>
-            <button onClick={() => navigate(-1)}>
+            <button onClick={goBack}>
               <i className="fa-solid fa-chevron-left"></i>
             </button>
             <button

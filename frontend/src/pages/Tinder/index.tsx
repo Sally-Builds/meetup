@@ -170,7 +170,7 @@ const Tinder: React.FC = () => {
           disabled={!canSwipe && isLoading}
           onClick={() => swipe("left")}
         >
-          Meh!
+          Decline
         </button>
         <button
           style={{ backgroundColor: !canGoBack ? "#c3c4d3" : undefined }}

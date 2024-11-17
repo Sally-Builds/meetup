@@ -192,7 +192,7 @@ export const findUsersWithSimilarInterests = async (
         // Sort by similarity score (highest first)
         {
             $sort: {
-                similarityScore: -1
+                similarityScore: 1
             }
         },
         // Pagination

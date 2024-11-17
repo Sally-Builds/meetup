@@ -51,6 +51,7 @@ export const getChat = async (participant: string, me: string) => {
     }
 
     console.log("Now to return the number of uread messages going into the chat is or was,", count)
+    console.log(chat, 'chat to return')
     return chat
 
 }

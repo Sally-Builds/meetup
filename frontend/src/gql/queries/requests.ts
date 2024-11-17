@@ -9,6 +9,7 @@ export const GET_CHAT = gql`
       updatedAt
       messages {
         senderId
+        timestamp
         content
         status
         _id

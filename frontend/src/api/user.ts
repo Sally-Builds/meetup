@@ -126,3 +126,13 @@ export const updateUser = async (data: IUpdateUserDTO) => {
 
     return res.data.data
 }
+
+
+export const updatePassword = async (data: { oldPassword: string, newPassword: string }): Promise<{ token: string, user: IUser }> => {
+    const res = await API.patch('/auth/update-password', data, { headers: { "Content-Type": "application/json" }, withCredentials: true })
+    localStorage.setItem('token', res.data.data.token)
+
+    console.log(res.data.data)
+
+    return res.data.data
+}

@@ -53,3 +53,42 @@ export const fetchEvent = async (slug: string): Promise<IEvent> => {
 
     return res.data.data
 }
+
+export const markAttendance = async (id: string): Promise<IEvent> => {
+    const token = localStorage.getItem('token')
+    const res = await API.get(`/events/attending/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }, withCredentials: true
+    })
+
+    console.log(res.data.data, 'events')
+
+    return res.data.data
+}
+
+export const getIsAttending = async (id: string): Promise<boolean> => {
+    const token = localStorage.getItem('token')
+    const res = await API.get(`/events/is-attending/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }, withCredentials: true
+    })
+
+    console.log(res.data.data, 'is attending request')
+
+    return res.data.data
+}
+
+export const getMarkedAttendanceCount = async (id: string): Promise<number> => {
+    const token = localStorage.getItem('token')
+    const res = await API.get(`/events/marked-attendance-count/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }, withCredentials: true
+    })
+
+    console.log(res.data.data, 'is attending request')
+
+    return res.data.data
+}

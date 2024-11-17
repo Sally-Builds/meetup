@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createEvent, getEvent, getEvents } from "../services/event.s";
+import { createEvent, getEvent, getEvents, getTotalAttendanceForEvent, isUserAttending, markAttendance } from "../services/event.s";
 import { CustomError } from "../utils/customError";
 import { StatusCodes } from "http-status-codes";
 
@@ -30,6 +30,24 @@ export const GetAllEventsController = async (req: Request, res: Response) => {
 
 export const GetEventController = async (req: Request, res: Response) => {
     const data = await getEvent(req.params.slug)
+
+    res.status(200).json({ data })
+}
+
+export const markAttendanceController = async (req: Request, res: Response) => {
+    const data = await markAttendance(req.user.id, req.params.id)
+
+    res.status(200).json({ data })
+}
+
+export const isUserAttendingController = async (req: Request, res: Response) => {
+    const data = await isUserAttending(req.user.id, req.params.id)
+
+    res.status(200).json({ data })
+}
+
+export const totalMarkedAttendanceController = async (req: Request, res: Response) => {
+    const data = await getTotalAttendanceForEvent(req.params.id)
 
     res.status(200).json({ data })
 }

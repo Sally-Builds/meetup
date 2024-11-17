@@ -1,7 +1,8 @@
-import Event, { IEvent } from "../models/Event";
+import Event, { IEvent, EventAttendeeModel } from "../models/Event";
 import { uploadImage } from "../utils/cloudinary";
 import { CustomError } from "../utils/customError";
 import { IFileBuffer } from "../utils/interfaces";
+
 
 
 export const createEvent = async (userId: string, payload: IEvent, file: IFileBuffer) => {
@@ -61,4 +62,25 @@ export const getEvent = async (slug: string) => {
     if (!event) throw new CustomError({ message: "Event not found", code: 404 })
 
     return event
+}
+
+export const markAttendance = async (userId: string, eventId: string) => {
+
+    const event = await Event.findById(eventId)
+
+    if (!event) throw new CustomError({ message: 'Event not Found', code: 404 })
+
+    const data = await EventAttendeeModel.create({ event: eventId, attendee: userId })
+
+    return data
+}
+
+export const isUserAttending = async (userId: string, eventId: string) => {
+    return !!(await EventAttendeeModel.findOne({ event: eventId, attendee: userId }))
+}
+
+export const getTotalAttendanceForEvent = async (eventId: string) => {
+    const total = await EventAttendeeModel.countDocuments({ event: eventId });
+
+    return total
 }

@@ -2,6 +2,7 @@ type Message {
   senderId: String!
   content: String!
   status: String!
+  timestamp: DateTime!
   _id: String!
 }
 
@@ -40,3 +41,4 @@ type Sender {
 type Subscription {
   messageSentNotification(receiver_id: String!): Sender!
 }
+

@@ -98,9 +98,9 @@ export const refreshToken = async (refresh_token: string) => {
 export const updatePassword = async (email: string, newPassword: string, oldPassword: string) => {
     const user = await User.findOne({ email })
 
-    if (!user) throw new CustomError({ message: "UnAuthorized", code: 401 })
+    if (!user) throw new CustomError({ message: "User Not found", code: 401 })
 
-    if (!(await bcrypt.compare(oldPassword, user.password))) throw new CustomError({ message: "UnAuthorized", code: 401 });
+    if (!(await bcrypt.compare(oldPassword, user.password))) throw new CustomError({ message: "Password incorrect", code: 401 });
 
     user.password = newPassword;
 

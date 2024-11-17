@@ -8,6 +8,7 @@ import { useUserStore } from "../../store/userStore";
 import { SEND_CHAT } from "../../gql/mutations/chat";
 import React from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import moment from "moment";
 
 interface ProfileImage {
   url: string;
@@ -26,6 +27,7 @@ interface Message {
   senderId: string;
   content: string;
   status: string;
+  timestamp: string;
 }
 
 interface Chat {
@@ -47,6 +49,7 @@ interface ISerializedChat {
   status: string;
   username: string;
   isMine: boolean;
+  time: string;
 }
 
 const Chat = () => {
@@ -65,13 +68,17 @@ const Chat = () => {
   const { loading, error, data } = useQuery<GetChatResponse>(GET_CHAT, {
     skip: !friendId || !loggedInUser,
     variables: { friendId },
+    fetchPolicy: "network-only",
   });
 
   const [sendMessage, { loading: sendLoading, error: sendError }] = useMutation(
     SEND_CHAT,
     {
       onCompleted(data, clientOptions) {
-        console.log(data);
+        console.log(
+          data,
+          "---------------------------------------------------"
+        );
       },
       onError: (error) => {
         console.error("Message send error:", error);
@@ -88,6 +95,10 @@ const Chat = () => {
 
   useEffect(() => {
     if (data && loggedInUser) {
+      console.log(
+        data,
+        "---------------------------------------------------ds"
+      );
       const chat = data.getChat;
       if (chat) {
         const serializedChat: ISerializedChat[] = chat.messages.map((el) => {
@@ -100,6 +111,7 @@ const Chat = () => {
             username: sender?.username ?? "",
             image: sender?.profile_image.url ?? "",
             isMine: sender?._id === loggedInUser._id,
+            time: el.timestamp,
           };
         });
         setSerializedChat(serializedChat);
@@ -153,7 +165,9 @@ const Chat = () => {
                 <div className={styles.messageContent}>
                   <div className={styles.name}>You</div>
                   <div className={styles.bubble}>{chat.message}</div>
-                  <div className={styles.time}>10:31 AM</div>
+                  <div className={styles.time}>
+                    {moment(chat.time).format("hh:mm A")}
+                  </div>
                   <div className={styles.status}>
                     <div className={styles.statusDot} />
                     {chat.status === "read" ? "Seen" : "Delivered"}
@@ -166,7 +180,9 @@ const Chat = () => {
                 <div className={styles.messageContent}>
                   <div className={styles.name}>{chat.username}</div>
                   <div className={styles.bubble}>{chat.message}</div>
-                  <div className={styles.time}>10:30 AM</div>
+                  <div className={styles.time}>
+                    {moment(chat.time).format("hh:mm A")}
+                  </div>
                 </div>
               </div>
             )}

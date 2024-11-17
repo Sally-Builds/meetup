@@ -3,7 +3,7 @@ import multer from "multer";
 import path from "path";
 import { CustomError } from "../utils/customError";
 import { authenticate } from "../middleware/authenticate.m";
-import { CreateEventController, GetAllEventsController, GetEventController } from "../controllers/event.c";
+import { CreateEventController, GetAllEventsController, GetEventController, isUserAttendingController, markAttendanceController, totalMarkedAttendanceController } from "../controllers/event.c";
 import { validationMiddleware } from "../middleware/validation.m";
 import { CreateEventValidation } from "../validations/eventSchema.v";
 
@@ -28,5 +28,8 @@ const coverUpload = upload.single('cover_image')
 router.route('/').post(authenticate, coverUpload, validationMiddleware(CreateEventValidation), CreateEventController).get(authenticate, GetAllEventsController)
 router.route('/:slug').get(authenticate, GetEventController)
 
+router.get('/attending/:id', authenticate, markAttendanceController)
+router.get('/is-attending/:id', authenticate, isUserAttendingController)
+router.get('/marked-attendance-count/:id', authenticate, totalMarkedAttendanceController)
 
 export default router;

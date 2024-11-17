@@ -4,6 +4,7 @@ import { IChat, getAllChat } from "../../api/chat";
 import { useUserStore } from "../../store/userStore";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 interface IMessage {
   id: string;
@@ -62,8 +63,12 @@ const MessageList = () => {
           <div
             key={msg.id}
             className={styles.messageItem}
-            onClick={() =>
-              navigate(`/dashboard/chat/${getFriendId(msg.participants)}`)
+            onClick={
+              () =>
+                (location.href = `/dashboard/chat/${getFriendId(
+                  msg.participants
+                )}`)
+              // navigate(`/dashboard/chat/${getFriendId(msg.participants)}`)
             }
           >
             <img
@@ -75,7 +80,9 @@ const MessageList = () => {
             <div className={styles.messageContent}>
               <div className={styles.header}>
                 <h3 className={styles.senderName}>{msg.sender}</h3>
-                <div className={styles["timestamp"]}>5:33PM</div>
+                <div className={styles["timestamp"]}>
+                  {moment(msg.timestamp).format("hh:mm A")}
+                </div>
               </div>
               <div className={styles.messageRow}>
                 <p className={styles.messageText}>{msg.message}</p>
