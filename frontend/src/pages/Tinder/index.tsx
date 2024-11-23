@@ -5,6 +5,7 @@ import { Badge, useToast, Stack } from "@chakra-ui/react";
 import { IUser, getAllUsers } from "../../api/user";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { sendRequest } from "../../api/request";
+import { useUserStore } from "../../store/userStore";
 
 interface Character {
   name: string;
@@ -22,6 +23,8 @@ const Tinder: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0); // Initialize to 0 instead of db.length - 1
   const currentIndexRef = useRef(currentIndex);
   const toast = useToast();
+
+  const { loggedInUser } = useUserStore();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["users"],
@@ -150,7 +153,22 @@ const Tinder: React.FC = () => {
         {data && data.length > 0 && canSwipe > 0 && (
           <>
             {data[currentIndex].interests.map((interest) => (
-              <Badge key={interest}>{interest}</Badge>
+              <>
+                {loggedInUser && loggedInUser.interests.length > 0 && (
+                  <>
+                    {loggedInUser.interests.includes(interest) ? (
+                      <Badge key={interest} color={"green"}>
+                        {" "}
+                        {interest}{" "}
+                      </Badge>
+                    ) : (
+                      <>
+                        <Badge key={interest}> {interest} </Badge>
+                      </>
+                    )}
+                  </>
+                )}
+              </>
             ))}
           </>
         )}
